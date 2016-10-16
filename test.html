@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>用户抽奖界面</title>
+	<link rel="stylesheet" href="js/themes/default/easyui.css" />
+	<link rel="stylesheet" href="js/themes/icon.css" />
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+</head>
+
+<body style="background:url('img/LB.jpg');background-size: cover;" >
+	<div style="width:700px; margin:50px auto; font-family:"楷体";">
+		<div class="fitem" id="show" style="width:700px; height:200px; line-height:400px; text-align:center; color:#FFDD57; font-family: gigi;font-size:80px">点击按钮开始抽奖</div>
+		<div style="width:250px;height:200px">
+			<table id="desk"></table>
+		</div>
+		<a class="button blue medium" style="display:block; width:80px; height:22px; margin:50px auto; text-align:center; line-height:20px; text-decoration:none; color:#fff -moz-border-radius:25px; -webkit-border-radius:25px; border-radius:25px;">
+			<span class="start" id="btn" style="text-align: center;font-family:'宋体';color: #CC2222;"><b>开始抽奖</b></span>
+		</a>
+	</div>
+	
+	<script type="text/javascript">
+		
+	$(function(){
+		var str;
+		var n=0;
+		var num;
+		num=getvl('lid');
+		var already=[];
+		var phone_src=[];
+		var tel='"';
+		var iddata;
+		var alldata=[];
+			
+		phone_src=getvl('pid');
+		var iddata = phone_src.split(',');
+		$.ajax({
+			type:"POST",
+			url:"//127.0.0.1:9999/get_phone",
+			data:{
+				pid:iddata
+			},
+			async:false,
+			success:function(msg){
+				alldata=msg;
+			}
+		})
+		
+		var num = alldata.length - 1;
+		var show = $("#show");
+		var btn = $("#btn");
+		var open = false;
+		
+		function getvl(name) {
+			var reg = new RegExp("(^|\\?|&)"+ name +"=([^&]*)(\\s|&|$)", "i");
+			if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, " "));
+			return "";
+		};
+		
+		function change(){
+			var randomVal = Math.round(Math.random() * num);
+			var prizeName = alldata[randomVal];
+			show.text(prizeName);
+			show.attr('data-index',randomVal)
+		}
+		
+		function run(){
+			if(!open){
+				timer=setInterval(change,30);
+				btn.removeClass('start').addClass('stop').text('停止');
+				open = true;
+			}else{
+				clearInterval(timer);
+				btn.removeClass('stop').addClass('start').text('开始抽奖');
+				$.ajax({
+					type:"post",
+					url:"http://127.0.0.1:9999/addowner",
+					data:{
+						ptel:$("#show").html()
+					},
+					async:false,
+					success:function(msg){
+						already.push(msg.ptel);
+						var index = $("#show").attr('data-index');
+						if(alldata.length === 1){
+							alldata = [];
+						}
+						alldata.splice(index,1);
+						str+="<tr><td style='width:300px; height:20px;font-family:elephant' >"+msg.ptel+"</td></tr>";
+						$("table").html(str);
+						if(alldata.length==0){
+							btn.unbind('click');
+							btn.text('人数不足');
+							$.messager.alert('警告',"无更多人选");
+					}
+				}
+			});
+			open = false;
+		}
+	}
+		btn.click(function(){run();})
+	})
+	</script>
+</body>
+</html>

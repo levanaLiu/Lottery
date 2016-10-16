@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>manager</title>
+		
+	
+	</head>
+
+	<body>
+		<div style="height:auto" id="manage_tb">
+			<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newLottery()">新增</a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editLottery()">编辑</a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteLottery()">删除</a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="searchLottery()">搜索</a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-hand" plain="true" onclick="dolottery()">执行抽奖</a>
+		</div>
+		<!--<div style="height:100%;width:100%">-->
+			<table id="manage_dg" border="false" ></table>
+		<!--</div>-->
+		
+		<div id="manage_dlg" class="easyui-dialog" data-options="model:true" style="width:400px;padding:10px 20px" closed="true">
+			<form id="manage_fm" method="post" novalidate="true">
+				<div class="fitem">
+					<label>开始时间:</label>
+					<input id = "start_time" style = "width:170px" name="start_time" class="easyui-datetimebox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>结束时间:</label>
+					<input id="end_time" style = "width:170px" name="end_time" class="easyui-datetimebox" data-options="required:true,validType:'end'"/>
+				</div>
+				<div class="fitem">
+					<label>活动单位:</label>
+					<input id="unit" style = "width:170px" name="unit" class="easyui-textbox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>活动名称:</label>
+					<input id="creator" style = "width:170px" name="creator" class="easyui-textbox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>获奖人数:</label>
+					<input id="number" style = "width:170px" name="number" class="easyui-textbox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>备注:</label>
+					<input id="remarks" style = "width:170px;height:60px" name="remarks" class="easyui-textbox" data-options="multiline:true" style="height:100px"/>
+				</div>
+				<div class="fitem" style="text-align: center;">
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width:30%" onclick="save()" >保存</a>
+				</div>
+			</form>
+		</div>
+		
+		<div id="manage_edit_dlg" class="easyui-dialog" data-options="model:true" style="width:400px;padding:10px 20px" closed="true">
+			<form id="manage_edit_fm" method="post" novalidate="true">
+				<div class="fitem">
+					<label>开始时间:</label>
+					<input id = "edit_start_time" style = "width:170px" name="start_time" class="easyui-datetimebox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>结束时间:</label>
+					<input id="edit_end_time" style = "width:170px" name="end_time" class="easyui-datetimebox" data-options="required:true,validType:'edit_end'"/>
+				</div>
+				<div class="fitem">
+					<label>活动单位:</label>
+					<input id="edit_unit" style = "width:170px" name="unit" class="easyui-textbox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>活动名称:</label>
+					<input id="edit_creator" style = "width:170px" name="creator" class="easyui-textbox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>获奖人数:</label>
+					<input id="edit_number" style = "width:170px" name="number" class="easyui-textbox" data-options="required:true"/>
+				</div>
+				<div class="fitem">
+					<label>备注:</label>
+					<input id="edit_remarks" style = "width:170px;height:60px" name="remarks" class="easyui-textbox" data-options="multiline:true" style="height:100px"/>
+				</div>
+				<div class="fitem" style="text-align: center;">
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" style="width:30%" onclick="myedit()" >修改</a>
+				</div>
+			</form>
+		</div>
+		
+		<div id="manage_search_dlg" class="easyui-dialog" style="width:400px;padding:10px 20px" closed="true" >
+			<form id="manage_search_fm" method="post" novalidate="true">
+				<div class="fitem">
+					<label>开始时间:</label>
+					<input id = "search_start_time" style = "width:170px" name="start_time" class="easyui-datetimebox" data-options="prompt:'在此之后开始的抽奖活动'"/>
+				</div>
+				<div class="fitem">
+					<label>结束时间:</label>
+					<input id="search_end_time" style = "width:170px" name="end_time" class="easyui-datetimebox" data-options="prompt:'在此之前结束的抽奖活动'"/>
+				</div>
+				<div class="fitem">
+					<label>活动单位:</label>
+					<input id="search_unit" style = "width:170px" name="unit" class="easyui-textbox" data-options="prompt:'可模糊查询'"/>
+				</div>
+				<div class="fitem">
+					<label>活动名称:</label>
+					<input id="search_creator" style = "width:170px" name="creator" class="easyui-textbox" data-options="prompt:'可模糊查询'"/>
+				</div>
+				<div class="fitem">
+					<label>是否已经抽奖:</label>
+					<input id="search_status" style = "width:170px" name="lstatus" class="easyui-textbox" data-options="prompt:'是/否'"/>
+				</div>
+				<div class="fitem" style="text-align: center;">
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:30%" onclick="mysearch()">搜索</a>
+				</div>
+			</form>
+		</div>
+
+		<script>
+			
+			$.extend($.fn.validatebox.defaults.rules, {    
+				end: {    
+    				validator: function(value,param){    
+        				var start_time = $("#start_time").datebox('getValue');
+        				var start = new Date(start_time);
+        				var end = new Date(value);
+        				return start<end;
+    				},    
+    				message: '结束时间必须晚于开始时间'
+				},
+				edit_end: {
+    				validator: function(value1,param){    
+        				var start_time = $("#edit_start_time").datebox('getValue');
+        				var start = new Date(start_time);
+        				var end = new Date(value1);
+        				return start<end;
+    				},    
+    				message: '结束时间必须晚于开始时间'
+				}
+			}); 
+			
+			
+			function newLottery() {
+				$('#manage_fm').form('clear');
+				$('#manage_dlg').dialog('open').dialog('center').dialog('setTitle', '新建抽奖');
+			}
+			
+			function save(){
+				alert(iplocation);
+				var judge = $('#manage_fm').form('validate');
+				if(!judge){
+					$.messager.alert('消息','请按照要求填写数据','info');
+				}
+				else{
+					$.ajax({
+				  		type:"POST",  //请求方式   GET POST
+				  		//请求地址
+				  		url:"http://"+iplocation+":9999/newlottery",
+				  		//是否同步
+						data:{
+							start_time: $("#start_time").datebox('getValue'),
+							end_time: $("#end_time").datebox('getValue'),
+							lcreator:$("#creator").val(),
+							lunit:$("#unit").val(),
+							lnumber:$("#number").val(),
+							lstatus:"否",
+							lremarks:$("#remarks").val()
+						},
+				  		async:true,
+				  		//请求成功数据
+				  		
+				  		success:function(msg){
+				  			$.messager.alert('消息',msg.msg,'info');
+				  			if(msg.judge){
+				  				$('#manage_dlg').dialog('close'); 
+				  				$("#manage_dg").datagrid('reload');
+				  			}
+				  			
+				  		}
+				  	});
+			  	}
+			} 
+			
+			
+			
+			function editLottery(){
+				var rowInfo = $("#manage_dg").datagrid('getSelected');
+				var rowIndex;
+				var msg;
+				
+				if(!rowInfo){
+					$.messager.alert('警告','请选中编辑行!');
+				}
+				else{
+					$.ajax({
+				  		type:"POST",  //请求方式   GET POST
+				  		//请求地址
+				  		url:"http://"+iplocation+":9999/showeditlottery",
+				  		//是否同步
+						data:{
+							lid:rowInfo.lid,
+						},
+				  		async:true,
+				  		//请求成功数据
+				  		success:function(msg){
+				  			$("#edit_start_time").datetimebox('setValue',msg[0].start_time);
+				  			$("#edit_end_time").datetimebox('setValue',msg[0].end_time);
+				  			$("#edit_creator").textbox('setText',msg[0].lcreator);
+				  			$("#edit_unit").textbox('setText',msg[0].lunit);
+				  			$("#edit_number").textbox('setText',msg[0].lnumber);
+				  			$("#edit_remarks").textbox('setText',msg[0].lremarks);
+				  		}
+				  	});
+				  	$('#manage_edit_dlg').dialog('open').dialog('center').dialog('setTitle', '编辑抽奖');
+				}
+			}
+			
+			function myedit(){
+				var rowInfo = $("#manage_dg").datagrid('getSelected');
+				console.log($("#creator").val());
+				var judge = $('#manage_edit_fm').form('validate');
+				if(!judge){
+					$.messager.alert('消息','请按照要求填写数据','info');
+				}
+				else{
+					$.ajax({
+				  		type:"POST",  //请求方式   GET POST
+				  		//请求地址
+				  		url:"http://"+iplocation+":9999/editlottery",
+
+				  		//是否同步
+						data:{
+							lid:rowInfo.lid,
+							start_time: $("#edit_start_time").datebox('getValue'),
+							end_time: $("#edit_end_time").datebox('getValue'),
+							lcreator:$("#edit_creator").textbox('getText'),
+							lunit:$("#edit_unit").textbox('getText'),
+							lnumber:$("#edit_number").textbox('getText'),
+							lremarks:$("#edit_remarks").textbox('getText')//val(),
+						},
+				  		async:true,
+				  		//请求成功数据
+				  		
+				  		success:function(msg){
+				  			//console.log(msg.msg);
+				  			$.messager.alert('消息',msg.msg,'info');
+				  			if(msg.judge){
+				  				$('#manage_edit_dlg').dialog('close'); 
+				  				$("#manage_dg").datagrid('reload');
+				  			}
+				  		}
+				  	});
+				}
+			}
+			
+			function deleteLottery(){
+				var rowInfo = $("#manage_dg").datagrid('getSelected');
+				var rowIndex;
+				var msg;
+				if(!rowInfo){
+					$.messager.alert('警告','请选中删除行!');
+				}
+				else{
+					$.messager.confirm('确认','确定删除此行数据？(此活动的抽奖人名单会同时删除）',function(r){
+    					if (r){
+    						var row = $('#manage_dg').datagrid('getSelected'); 
+    						$.ajax({
+						  		type:"POST",  //请求方式   GET POST
+						  		//请求地址
+
+						  		url:"http://"+iplocation+":9999/deletelottery",
+
+
+						  		//是否同步
+								data:{
+									lid: row.lid,
+								},
+						  		async:true,
+						  		//请求成功数据  		
+						  		success:function(msg){
+						  			$.messager.alert('消息',msg.msg,'info');
+						  			$("#manage_dg").datagrid('reload');
+						  		}
+				  			});
+    					}
+					});
+				}
+			}
+			
+			function searchLottery(){
+				$('#manage_search_fm').form('clear');
+				$('#manage_search_dlg').dialog('open').dialog('center').dialog('setTitle', '搜索抽奖活动');
+			}
+			
+			
+			function mysearch(){
+				var grid = $('#manage_dg');  
+				var options = grid.datagrid('getPager').data("pagination").options;  
+				var page = options.pageNumber;  
+				var rows = options.pageSize;  
+				$('#manage_dg').datagrid('load', {    
+					search_start_time: $("#search_start_time").datebox('getValue'),
+					search_end_time: $("#search_end_time").datebox('getValue'),
+					search_lcreator:$("#search_creator").val(),
+					search_lunit:$("#search_unit").val(),
+					//search_lnumber:$("#number").val(),
+					search_lstatus:$("#search_status").val()
+				});
+				$('#manage_dg').datagrid('options').queryParams = {};
+				$('#manage_search_dlg').dialog('close');
+			}
+			
+			function dolottery(){
+				var rowInfo = $("#manage_dg").datagrid('getSelected');
+				if(!rowInfo){
+					$.messager.alert('警告','请选中执行活动!');
+				}
+				else{
+					$.ajax({
+						type:"post",
+
+						url:"http://"+iplocation+":9999/check_lid",
+
+
+						data:{lid:rowInfo.lid},
+						async:true,
+						success:function(msg){
+							if(msg.judge){
+								$.messager.alert('消息',msg.msg,'info');
+								location.href = "NewLotteryPage.html?lid="+rowInfo.lid + "&lnumber="+msg.lnumber;
+							}
+							else{
+								$.messager.alert('消息',msg.msg,'info');
+							}
+						}
+					})
+				}
+			}
+     		
+			$(function() {			
+				$('#manage_dg').datagrid({
+
+					url: "http://"+iplocation+":9999/getlottery",
+
+					method: 'POST',
+					toolbar: '#manage_tb',
+					pagination: true,
+					iconCls: "icon-add",
+					rownumbers:true,
+					singleSelect:true,
+					fit:true,
+					columns: [
+						[{
+							field: 'start_time',
+							title: '开始时间',
+							align: 'center',
+							width: 150,
+							
+						}, {
+							field: 'end_time',
+							title: '结束时间',
+							align: 'center',
+							width: 150,
+						}, {
+							field: 'lunit',
+							title: '活动单位',
+							align: 'center',
+							width: 150,
+						}, {
+							field: 'lcreator',
+							title: '活动名称',
+							align: 'center',
+							width: 150,
+						},{
+							field: 'lnumber',
+							title: '获奖人数',
+							align: 'center',
+							//width: 100,
+						}, {
+							field: 'lstatus',
+							title: '是否已经抽奖',
+							align: 'center',
+							//width: 100,
+						}, {
+							field: 'lremarks',
+							title: '备注',
+							align: 'center',
+							width: 300,
+						}]
+					]
+				});		
+			})
+		</script>
+		
+		<style type="text/css">
+	        #manage_fm{
+	            margin:0;
+	            padding:10px 30px;
+	        }
+	        .fitem label{
+	            display:inline-block;
+	            width:80px;
+	        }
+	        .fitem input{
+	            width:160px;
+	        }
+	        .fitem{
+	        	width:300px;
+	        	margin:10px auto;
+	        	
+	        }
+    	</style>
+	</body>
+</html>

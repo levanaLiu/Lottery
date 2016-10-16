@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>用户抽奖界面</title>
+	<link rel="stylesheet" href="js/themes/default/easyui.css" />
+	<link rel="stylesheet" href="js/themes/icon.css" />
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+	<script type="text/javascript" src="js/easyui-lang-zh_CN.js" ></script>
+    <link rel="shortcut icon" href="../favicon.ico"> 
+    <link rel="stylesheet" type="text/css" href="css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="css/style2.css" />
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="css/page.css" />
+    <link rel="stylesheet" type="text/css" href="buttons/buttons.css" />
+    <script type="text/javascript" src="js/iplocation.js"></script>
+    
+</head>
+
+<body class="img-responsive" style="background:url('img/LB.jpg')no-repeat;background-size: cover;overflow-y: hidden;" onkeydown="keyDown()" >
+	<div style="height: 85%;">	
+		<div style="width:20%;margin:0 0 0 5%;float: left;">
+			<!--<table frame="border" id="desk"style="margin-left: 100px;margin-top: 140px;"></table>-->
+			<table frame="border" id="desk" style="margin-left: 15%;margin-top:30%;"></table>
+		</div>
+		<div style="width:60%;margin-left:25%;margin-top: 5%; font-family:'楷体'">
+			<div id="ActivityUnit" style="width:auto;font-family:elephant;font-size:50px;text-align: center;"></div>
+			<div id="ActivityName" style="width:auto;font-family:elephant;font-size:50px;text-align: center;"></div>
+			<div class="fitem" id="show" style="margin-top:10%;  text-align:center; color:white; font-family:gigi; font-size:100px;">点击按钮开始抽奖</div>
+			<a class="button blue medium" style="display:block; width:200px; height:30px; margin:10% auto 0 auto;text-align:center; line-height:30px; text-decoration:none; color:#fff -moz-border-radius:25px; -webkit-border-radius:25px; border-radius:25px;">
+				<span class="start" id="btn" style="text-align: center;font-family:'楷体';color:black;font-size:40px;"><b>开始抽奖</b></span>
+			</a>
+		</div>
+	</div>	
+	<!--<div  style="height:15%;float: right;">
+		<a href="index.html" style="margin-top:10px;margin-right: 40px;" class="easyui-linkbutton" plain="true" >返回管理界面</a>
+	</div>-->
+	
+	<script type="text/javascript">
+		
+	$(function(){
+		
+		$.ajax({
+			type:"POST",
+			url:"http://"+iplocation+":9999/get_phone",
+			data:{
+				lid:lid
+			},
+			async:false,
+			success:function(msg){
+				alldata=msg.tel;
+				TitleName = msg.lcreator;
+				TitleUnit = msg.lunit;
+				$('#ActivityName').text(TitleName);
+				$('#ActivityUnit').text(TitleUnit);
+			}
+		})
+		btn.click(function(){run();});
+	});
+	
+	var str="<tr><td style='font-family: 楷体;font-size:30px;text-align: center;'>获奖名单</td></tr>";
+	var n=0;
+	var lid=getvl('lid');
+	var already=[];
+	var phone_src=[];
+	var tel='"';
+	var iddata;
+	var alldata=[];
+	var PeopleNum=getvl('lnumber');
+	var RealNum=0;
+	var num = alldata.length - 1;
+	var show = $("#show");
+	var btn = $("#btn");
+	var open = false;
+		
+		
+	function getvl(name) {
+		var reg = new RegExp("(^|\\?|&)"+ name +"=([^&]*)(\\s|&|$)", "i");
+		if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, " "));
+		return "";
+	};
+	
+	function change(){
+		var num = alldata.length - 1;
+		var randomVal = Math.round(Math.random() * num);
+		var prizeName = alldata[randomVal];
+		show.text(prizeName);
+		show.attr('data-index',randomVal)
+	}
+	
+	function run(){
+		if(!open){
+			
+			if(RealNum>=PeopleNum){
+				$.messager.alert('警告',"中奖人满");
+				btn.unbind('click');
+				btn.text('抽奖结束');
+				//open=true;
+			}
+			else if(alldata.length==0){
+				btn.unbind('click');
+				btn.text('人数不足');
+				$.messager.alert('警告',"无更多人选");
+			}
+			else{
+				RealNum++;
+				timer=setInterval(change,30);
+				btn.removeClass('start').addClass('stop').text('停止');
+				open = true;
+			}
+		}else{
+			clearInterval(timer);
+			btn.removeClass('stop').addClass('start').text('开始抽奖');
+			$.ajax({
+				type:"post",
+				url:"http://"+iplocation+":9999/addowner",
+				data:{
+					ptel:$("#show").html(),
+					lid:lid
+				},
+				async:false,
+				success:function(msg){
+					already.push(msg.tel);
+					var index = $("#show").attr('data-index');
+					if(alldata.length === 1){
+						alldata = [];
+					}
+					alldata.splice(index,1);
+					str+="<tr><td style='font-size:20px;width:300px; height:30px;font-family:elephant;color:maganta;text-align:center' >"+msg.tel+"</td></tr>";
+					$("table").html(str);
+					if(alldata.length==0){
+						btn.unbind('click');
+						btn.text('人数不足');
+						$.messager.alert('警告',"无更多人选");
+					}
+				}
+			});
+		open = false;
+		$('#desk').attr("border","8");
+		$('#desk').attr("bordercolor","pink");
+		}
+	}
+	
+	function keyDown() {　　　　
+		var keycode = event.which;　　
+		if (keycode == 38 || keycode == 40) {　　
+			　　
+			run();　　
+		}　　　　
+	};　
+
+	</script>
+</body>
+</html>

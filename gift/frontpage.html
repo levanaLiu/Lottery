@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>抽奖管理登陆界面</title>
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+		<script type="text/javascript" src="js/easyui-lang-zh_CN.js"></script>
+	</head>
+
+	<body style="background:url('img/login_image.png');background-size: cover">
+		<div style="margin:300px auto auto 200px;">
+		<div style="width:500px;margin:0 auto">
+			<div style="margin-bottom:10px">
+				<input id = "login_name" class="easyui-textbox" style="width:100%;height:40px;padding:12px" data-options="prompt:'Username',iconCls:'icon-man',iconWidth:38">
+			</div>
+			<div style="margin-bottom:20px">
+				<input id = "login_pw" class="easyui-textbox" type="password" style="width:100%;height:40px;padding:12px" data-options="prompt:'Password',iconCls:'icon-lock',iconWidth:38">
+			</div>
+			<div style="margin-bottom:20px">
+				<input id = "login_remember" type="checkbox" checked="checked">
+				<span>Remember me</span>
+			</div>
+			<div>
+				<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" style="padding:5px 0px;width:100%;" onclick = "login()">
+					<span style="font-size:14px;">Login</span>
+				</a>
+			</div>
+		</div>
+		</div>
+		
+		<script type="text/javascript">
+			function login(){
+				$.ajax({
+			  		type:"POST",  //请求方式   GET POST
+			  		//请求地址
+			  		url:"http://127.0.0.1:9999/login",
+			  		//是否同步
+					data:{
+						mname:$("#login_name").textbox('getText'),
+						mpw:$("#login_pw").textbox('getText')
+					},
+			  		async:true,
+			  		//请求成功数据  		
+			  		success:function(msg){
+			  			if(msg.msg){
+			  				$.messager.alert('消息','登陆成功','info');
+			  				var check_status = $("#login_remember").attr("checked");
+			  				
+			  				location.href = "index.html?mid=" + msg.mid + "&mname=" + $("#login_name").textbox('getText');
+			  				console.log('登陆成功');
+			  			}else{
+			  				$.messager.alert('消息','登陆失败','info');
+			  			}
+			  		}
+			  	});
+			}
+		</script>
+	</body>
+</html>

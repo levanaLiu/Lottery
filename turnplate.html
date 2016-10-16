@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>参与抽奖</title>
+	<meta name="description" content="抽奖活动" />
+</head>
+<body>
+	<style type="text/css">
+	*{margin:0;padding:0;list-style-type:none;}
+	a,img{border:0;}
+	body{font:12px/180% Arial, Helvetica, sans-serif, "新宋体";}
+	/* lottery */
+	#lottery{background:url("img/disc-bg.gif") no-repeat;position:relative;height:450px;width:450px;margin:40px auto;}
+	#lottery .image{position:absolute;left:47px;top:47px;width:352px;height:352px;}
+	#lottery .arrow{background:url("img/arrow.png") no-repeat;height:191px;left:207px;position:absolute;top:91px;width:32px;}
+	#lottery .arrow{_background:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='img/arrow.png');}
+	#lottery .lottery-button{height:92px;left:177px;overflow:hidden;position:absolute;top:181px;width:91px;}
+	#lottery .lottery-button span{cursor:pointer;display:block;height:92px;position:relative;width:91px;}
+	#lottery .first span{background:url("img/buttons_01.png") no-repeat;}
+	#lottery .first span{_background:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='img/buttons_01.png');}
+	</style>
+	
+	<div id="lottery">
+		<img id="imgs" src="img/disc-rotate.gif" viewbox="0 0 352 30" class="image" />
+		<div class="arrow"></div>
+		<div class="lottery-button first">
+			<span></span>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="js/jQueryRotate.2.2.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$(".lottery-button").click(function(){
+				for(var i = 0; i <= 10000; i++){
+					$("#imgs").rotate({
+						animateTo: i,
+						duration: 10000
+					});
+					if (i >= 3162){ //设置转盘停位置
+						break;
+					}
+				}
+			})
+	});
+</script>
+
+</body>
+</html>

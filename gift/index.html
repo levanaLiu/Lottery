@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>后台</title>
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+		<script type="text/javascript" src="js/easyui-lang-zh_CN.js" ></script>
+		
+		<style type="text/css">
+			.left_button{
+				height:50px;
+				width:100px;
+				margin:15px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="easyui-layout" fit="true">
+			<div region="north" >
+				<div id="title" style="width: 70%; float:left">
+					<img src="img/gift.png" style="width:65px;height:65px;line-height: 65px;"/>
+					<span style="font-size:xx-large;height:65px;line-height: 65px;">抽奖管理界面</span>
+				</div>
+				<div style="float: right;">
+					<div style="height: 30px;margin:10px">
+						<label style="width:20px">当前登录人：</label>
+						<label style="width:20px" id="login_name"></label>
+						<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="edit()">修改资料</a>
+					</div>
+					<div style="height: 30px;margin:10px">
+						<label style="width:40px">时间：</label>
+						<label id="time"></label>
+					</div>
+				</div>
+			</div>
+			<div region="west" split="true" title="导航栏" style="width:150px;">
+				<button class="left_button" data-url="check.html">查看抽奖名单</button>
+				</br>
+				<button class="left_button" data-url="manager.html">抽奖管理</button>
+			</div>
+			<div id="content" region="center" >
+				<div id="tt" class="easyui-tabs" fit="true">
+				</div>
+			</div>
+		</div>
+		
+		<div id="index_dlg" class="easyui-dialog" style="width:400px;padding:10px 20px" closed="true" >
+			<form id="index_fm" method="post" novalidate>
+				<div class="fitem">
+					<label>姓名:</label>
+					<input id = "mname" name="mname" class="easyui-textbox" required="true">
+				</div>
+				<div class="fitem">
+					<label>密码:</label>
+					<input id="mpw" name="mpw" class="easyui-textbox" required="true">
+				</div>
+				<div class="fitem">
+					<label>电话:</label>
+					<input id="mtel" name="mtel" class="easyui-textbox" >
+				</div>
+				<div class="fitem">
+					<label>备注:</label>
+					<input id="mremarks" name="mremarks" class="easyui-textbox" data-options="multiline:true" >
+				</div>
+				<div class="fitem">
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width:30%" onclick="manager_save()" >保存</a>
+				</div>
+			</form>
+		</div>
+		
+		<script>
+			function getvl(name) {
+				var reg = new RegExp("(^|\\?|&)"+ name +"=([^&]*)(\\s|&|$)", "i");
+				if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, " "));
+				return "";
+			};
+			
+			
+			$(function(){				
+			    var mydate = new Date();
+				$("#time").html(mydate.toLocaleDateString()+ " " + mydate.toLocaleTimeString());
+				var h= function(){
+				var mydate = new Date();
+				$("#time").html(mydate.toLocaleDateString()+ " " + mydate.toLocaleTimeString());
+				setTimeout(h,1000);
+				};
+				setTimeout(h,1000);
+				
+				$("#login_name").html(getvl('mname'));
+				
+
+				$("button").click(function(){
+					var text = $(this).html();
+					var url = $(this).attr('data-url');
+					if($("#tt").tabs("exists",text)){
+       					$("#tt").tabs("select",text);    
+    				}else{
+						$('#tt').tabs('add',{
+					    title:text,
+					    href:url,
+					    closable:true
+					 	});
+					}
+					});
+				})
+			
+			function edit(){
+				$('#index_fm').form('clear');
+				$('#index_dlg').dialog('open').dialog('center').dialog('setTitle', '修改资料');
+			}
+			
+			function manager_save(){
+				//获得登陆界面(frontpage.html)传来的参数
+				
+				var judge = $('#index_fm').form('validate');
+				if(!judge){
+					$.messager.alert('消息','请按照要求填写数据','info');
+				}else{
+					$.ajax({
+				  		type:"POST",  //请求方式   GET POST
+				  		//请求地址
+				  		url:"http://127.0.0.1:9999/editmanager",
+				  		//是否同步
+						data:{
+							mid:getvl('mid'),
+							mname:$("#mname").val(),
+							mpw:$("#mpw").val(),
+							mtel:$("#mtel").val(),
+							mremarks:$("#mremarks").val(),
+						},
+				  		async:true,
+				  		//请求成功数据
+				  		
+				  		success:function(msg){
+				  			$.messager.alert('消息',msg.msg,'info');
+				  			$('#index_dlg').dialog('close'); 
+				  		}
+				  	});
+			  	}
+			
+			}
+		</script>
+		
+		<style type="text/css">
+        #index_fm{
+            margin:0;
+            padding:10px 30px;
+        }
+        .fitem label{
+            display:inline-block;
+            width:80px;
+        }
+        .fitem input{
+            width:160px;
+        }
+        .fitem{
+        	width:300px;
+        	margin:10px auto;
+        }
+    	</style>
+	</body>
+</html>

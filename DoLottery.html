@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>用户抽奖登录界面</title>
+	<link rel="stylesheet" href="js/themes/default/easyui.css" />
+	<link rel="stylesheet" href="js/themes/icon.css" />
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<!--<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+	<script type="text/javascript" src="js/easyui-lang-zh_CN.js" ></script>-->
+    <link rel="shortcut icon" href="../favicon.ico"> 
+    <link rel="stylesheet" type="text/css" href="css/demo.css" />
+    <link rel="stylesheet" type="text/css" href="css/style2.css" />
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" type="text/css" href="css/page.css" />
+    <link rel="stylesheet" type="text/css" href="buttons/buttons.css" />
+    <script type="text/javascript" src="js/iplocation.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+</head>
+
+<body class="img-responsive" style="background:url('img/LB.jpg')no-repeat;background-size: cover;overflow-y: hidden;" >
+	<div style="height: 85%;">	
+		<div style="width:60%;margin-left:20%;margin-top: 5%; font-family:'楷体'">
+			<div id="show" style="margin-top:10%;  text-align:center; color:white; font-family:gigi; font-size:5em;">选择抽奖活动</div>
+			<form id = "usercheck_fm" action="" method="post">
+        		<div id="selectlunit" style = "text-align: center;margin-top:3%">
+        			<select id = 'lunit_select' class='combobox fitem2' onchange='getlcreator(this.value)'>
+        			</select>
+        		</div>
+                <div id="selectlcreator" style = "text-align: center;margin-top:3%">
+                	<select id = 'lcreator_select' class='combobox fitem2'>
+                	</select>
+                </div>
+            </form>
+			<a class="button blue medium" style="display:block; width:200px; height:30px; margin:10% auto 0 auto;text-align:center; line-height:30px; text-decoration:none; color:#fff -moz-border-radius:25px; -webkit-border-radius:25px; border-radius:25px;" onclick="startLottery()">
+				<span class="start" id="btn" style="text-align: center;font-family:'楷体';color:black;font-size:40px;"><b>确定</b></span>
+			</a>
+		</div>
+	</div>	
+	
+	<script type="text/javascript">
+		
+	$(function(){
+		
+		$.ajax({
+			type:"POST",  //请求方式   GET POST
+	  		//请求地址
+	  		url:"http://"+iplocation+":9999/getlunit",
+	  		//是否同步
+			data:{
+				
+			},
+	  		async:true,
+	  		//请求成功数据  		
+	  		success:function(msg){
+	  			var select = "<option value='选择公司' selected='true'>选择公司</option>";
+	  			for(var i = 0;i<msg.length;i++){
+	  				select += "<option value" + msg[i] + ">" + msg[i]+"</option>";
+	  			}
+	  			$("#lunit_select").html(select);
+	  		}
+		});
+	});
+	
+	function getlcreator(value){
+		$.ajax({
+			type:"POST",  //请求方式   GET POST
+	  		//请求地址
+	  		url:"http://"+iplocation+":9999/getlcreator",
+	  		//是否同步
+			data:{
+				lunit:$("#lunit_select").val()
+			},
+	  		async:true,
+	  		//请求成功数据  		
+	  		success:function(msg){
+	  			var select = "<option value='选择活动' selected='true'>选择活动</option>";
+	  			for(var i = 0;i<msg.length;i++){
+	  				select += "<option value" + msg[i] + ">" + msg[i]+"</option>";
+	  			}
+	  			$("#lcreator_select").html(select);
+	  		}
+		});
+	}
+	
+	function startLottery(){
+		$.ajax({
+			type:"POST",  //请求方式   GET POST
+	  		//请求地址
+	  		url:"http://"+iplocation+":9999/startlottery",
+	  		//是否同步
+			data:{
+				lunit:$("#lunit_select").val(),
+				lcreator:$("#lcreator_select").val()
+			},
+	  		async:true,
+	  		//请求成功数据  		
+	  		success:function(msg){
+	  			alert("正在跳转");
+				location.href = "NewLotteryPage.html?lid="+msg.lid + "&lnumber="+msg.lnumber;
+				
+	  		}
+		});
+	}
+	
+
+	</script>
+</body>
+</html>

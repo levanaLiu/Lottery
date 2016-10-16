@@ -1,0 +1,147 @@
+<html>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+    <head>
+		
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<link rel="stylesheet" href="css/bootstrap.min.css"  />
+		<link rel="stylesheet" href="css/bootstrap-combobox.css"  />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src = "js/bootstrap-combobox.js"></script>
+		<script type="text/javascript" src="js/iplocation.js"></script>
+		
+		<!--<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+		<script type="text/javascript" src="js/easyui-lang-zh_CN.js"></script>-->
+		
+		
+        <meta charset="utf-8">
+        <title>参与抽奖</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link rel="stylesheet" href="css/style.css">
+
+       
+
+    </head>
+
+    <body style="background:url('img/user_background.gif');background-repeat:repeat ;">
+    	
+        <div style= "position: absolute;text-align: center;width:100%;height:100%">
+        	<div style = "position:relative;top:150px">
+	            <h1 style = "margin:0 auto 40px auto">参与抽奖</h1>
+	            <form id = "usercheck_fm" action="" method="post">
+	            	
+            		<div id="selectlottery"></div>
+	                <input id="join_ptel" name="join_ptel" placeholder="请输入电话" class = "fitem"/>            
+	               	</br>
+	                <button type="button" class="submit_button" onclick= "userJoin()"> 参与</button>
+	            </form>
+	        </div>
+            
+        </div>
+        
+		
+        <script type="text/javascript">
+        
+        	$(function(){
+        		var mydate = new Date();
+        		var year = mydate.getFullYear();
+        		var month =mydate.getMonth()+1;
+        		var day =mydate.getDate();
+        		var hour = mydate.getHours();
+        		var minute = mydate.getMinutes();
+        		var second = mydate.getSeconds();
+        		var current = year + '-' ;
+        		if(month<10)
+        			current = current + '0' + month + '-';
+        		else
+        			current = current + month + '-';
+        		if(day<10){
+        			current = current + '0' + day + ' ';
+        			console.log(current);
+        		}
+        		else
+        			current = current + day + ' ';
+        		if(hour<10)
+        			current = current + '0' + hour + ':';
+        		else
+        			current = current + hour + ':';
+        		if(minute<10)
+        			current = current + '0' + minute + ':';
+        		else
+        			current = current + minute + ':';
+        		if(second<10)
+        			current = current + '0' + second;
+        		else
+        			current = current + second;
+        		
+        		
+        		$.ajax({
+        			type:"POST",  //请求方式   GET POST
+			  		//请求地址
+			  		url:"http://"+iplocation+":9999/getcurrentlottery",
+			  		//是否同步
+					data:{
+						currenttime: current
+					},
+			  		async:true,
+			  		//请求成功数据  		
+			  		success:function(msg){
+			  			var select = "<select id = 'currentlottery' class='combobox fitem'><option value='选择要参加的活动' selected='true'>选择要参加的活动</option>";
+			  			for(var i = 0;i<msg.length;i++){
+			  				select += "<option value" + msg[i] + ">" + msg[i]+"</option>";
+			  			}
+			  			select += "</select>";
+			  			$("#selectlottery").append(select);
+			  		}
+        			
+        		});
+        	})
+
+			function userJoin(){
+				var judge = true;
+				if($("#currentlottery").val() === '选择要参加的活动')
+					alert('请选中要参加的抽奖活动。如果列表为空说明当前没有正在进行的活动！');
+				
+				else{
+					console.log($("#join_ptel").val());
+					if($("#join_ptel").val()===""){
+						alert('必须填写电话号');
+					}
+					else{
+						var lottery_text = $("#currentlottery").val();
+						var lottery_name = lottery_text.split('-');
+						var lunit = lottery_name[0];
+						var lcreator = lottery_name[1];
+						console.log(lunit,lcreator);
+						$.ajax({
+					  		type:"POST",  //请求方式   GET POST
+					  		//请求地址
+					  		url:"http://"+iplocation+":9999/userjoin",
+					  		//是否同步
+							data:{
+								ptel:$("#join_ptel").val(),
+								lunit:lunit,
+								lcreator:lcreator
+							},
+					  		async:true,
+					  		//请求成功数据  		
+					  		success:function(msg){
+					  			alert(msg.msg);
+					  		}
+					  	});
+					}
+				}
+			}
+		</script>
+		
+    </body>
+
+</html>
+

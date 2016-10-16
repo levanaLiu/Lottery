@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>抽奖管理登陆界面</title>
+		<link rel="stylesheet" href="css/style1.css" />
+		<link rel="stylesheet" href = "buttons/buttons.css"  />
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+		<script type="text/javascript" src="js/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="js/iplocation.js"></script>
+		
+		<!--<script type="text/javascript" src="js/jquery.min.js"></script>-->
+		
+	</head>
+
+	<body style="background:url('img/classic-login-background2.png');background-repeat: repeat;">
+		<div style = "background: url('img/classic-login-form.png');width:609px;height:533px;margin:auto 400px;">
+			
+			<input id = "login_name"  style="position:relative;left: 230px;top:285px;width:200px" data-options="prompt:'Username',iconCls:'icon-man',iconWidth:38">
+			</br>
+			<input id = "login_pw" type="password" style="position:relative;left: 230px;top:322px;width:200px" data-options="prompt:'Password',iconCls:'icon-lock',iconWidth:38">
+		
+			<a href="#" class="a_demo_one"  style= "position:relative; left: 60px;top:400px;" onclick = "login()">
+				<span style="font-size:14px;">登录</span>
+			</a>
+		</div>
+		
+		<script type="text/javascript">
+			function login(){
+				$.ajax({
+			  		type:"POST",  //请求方式   GET POST
+			  		//请求地址
+			  		url:"http://"+iplocation+":9999/login",
+			  		//url:"http://192.168.1.36:9999/login",
+			  		//是否同步
+					data:{
+						mname:$("#login_name").val(),
+						mpw:$("#login_pw").val()
+					},
+			  		async:true,
+			  		//请求成功数据  		
+			  		success:function(msg){
+			  			if(msg.msg){
+			  				$.messager.alert('消息','登陆成功','info');
+			  				location.href = "index.html?mid=" + msg.mid + "&mname=" + $("#login_name").val();
+			  				console.log('登陆成功');
+			  			}else{
+			  				$.messager.alert('消息','密码错误！','info');
+			  			}
+			  		}
+			  	});
+			}
+		</script>
+	</body>
+</html>

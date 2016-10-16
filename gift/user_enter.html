@@ -1,0 +1,93 @@
+﻿<html>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+    <head>
+		
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.mobile.js"></script>
+		<script type="text/javascript" src="js/easyui-lang-zh_CN.js"></script>
+		<!--<script type="text/javascript" src="js/jquery-1.8.2.min.js" ></script>
+        <script type="text/javascript" src="js/supersized.3.2.7.min.js" ></script>
+        <script type="text/javascript" src="js/supersized-init.js" ></script>
+        <script type="text/javascript" src="js/scripts.js" ></script>-->
+		
+        <meta charset="utf-8">
+        <title>注册账号(User_Login)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/supersized.css">
+        <link rel="stylesheet" href="css/style.css">
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+    </head>
+
+    <body style="background:url('img/user_enter2.jpg');background-size: cover">
+        <div class="page-container" >
+            <h1>登录(Login)</h1>
+            <form action="" method="post">
+                <input id="login_pname" type="text" name="username" class="username" placeholder="请输入您的用户名！">
+                <input id="login_ppw" type="password" name="password" class="password" placeholder="请输入您的用户密码！">
+                <!--<input type="Captcha" class="Captcha" name="Captcha" placeholder="请输入验证码！">-->
+                <button type="button" class="submit_button" onclick="userLogin()">登录查看</button>
+                <!--<div class="error"><span>+</span></div>--><br></br><br></br>
+                
+            </form>
+            <div> <!--<class="connect">-->
+            	<a href="#" class="linkbutton" style="color: white;iconAlign=left" >注册账号</a>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="#" class="linkbutton" style="color: white;iconAlign=right" >忘记密码</a>
+                <!--<a href="#" class="linkbutton">注册账号</a>
+                <p>快捷</p>
+                <p>
+                    <a class="facebook" href=""></a>
+                    <a class="twitter" href=""></a>
+                </p>-->
+            </div>
+        </div>
+		
+        <script type="text/javascript">
+
+			function userLogin(){
+				$.ajax({
+			  		type:"POST",  //请求方式   GET POST
+			  		//请求地址
+			  		url:"http://127.0.0.1:9999/userLogin",
+			  		//是否同步
+					data:{
+						pname:$("#login_pname").val(),
+						ppw:$("#login_ppw").val()
+					},
+			  		async:true,
+			  		//请求成功数据  		
+			  		success:function(msg){
+			  			if(msg.msg){
+			  				$.messager.alert('消息','登陆成功','info');
+			  				var check_status = $("#login_remember").attr("checked");
+			  				location.href = "turnplate.html?pid=" + msg.pid + "&pname=" + $("#login_pname").val();
+			  				console.log('登陆成功');
+			  			}else{
+			  				$.messager.alert('消息','登陆失败','info');
+			  			}
+			  		}
+			  	});
+			}
+		</script>
+
+    </body>
+
+</html>
+

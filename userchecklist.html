@@ -1,0 +1,72 @@
+<html>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<link rel="stylesheet" href="css/bootstrap.min.css"  />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/iplocation.js"></script>
+		
+		<title>usercheck</title>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        	
+        <link rel="stylesheet" href="css/style.css">
+	</head>
+	
+	<body style="background:url('img/user_background.gif');background-repeat:repeat ;">
+		<div style= "position: absolute;text-align: center;width:100%;height:100%">
+			<div style = "position:relative;top:50px">
+				<h1 style = "margin:0 auto 40px auto">历史抽奖结果</h1>
+				<div id ="userlotterytable" style="text-align:center">
+					<!--<table class="table"  id="usercheck_dg" ></table>-->
+					
+				</div>
+				<button type="button" class="submit_button" onclick="userback()" > 返回</button>
+			</div>
+		</div>
+		
+		<script>
+			function getvl(name) {
+				var reg = new RegExp("(^|\\?|&)"+ name +"=([^&]*)(\\s|&|$)", "i");
+				if (reg.test(location.href)) return unescape(RegExp.$2.replace(/\+/g, " "));
+				return "";
+			};
+			
+			$(function() {	
+				$.ajax({
+					type:"post",
+					url:"http://"+iplocation+":9999/userchecklist",
+					data:{pid:getvl('pid')},
+					async:true,
+					success:function(msg){
+						var str="<table class='table'  id='usercheck_dg' ><thread><tr><td>活动单位</td><td>活动名称</td><td>是否中奖</td><td>抽奖是否完毕</td></tr></thread><tbody>";
+						for(var i=0;i<msg.length;i++){
+							str +="<tr><td>"+msg[i].lunit+"</td><td>"+msg[i].lcreator+"</td><td>"+msg[i].sstatus+"</td><td>"+msg[i].lstatus+"</td></tr>";
+						}
+						str += "</tbody></table>"
+						$("#userlotterytable").append(str);
+					}
+				});
+			})
+			
+			function userback(){
+				location.href = "usercheck.html";
+			}
+		</script>
+		<style>
+			table{
+				color:white;
+			}
+			td{
+				text-align:center;
+			}
+			
+		</style>
+	</body>
+</html>

@@ -1,0 +1,79 @@
+﻿<html>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+    <head>
+		
+		<link rel="stylesheet" href="js/themes/default/easyui.css" />
+		<link rel="stylesheet" href="js/themes/icon.css" />
+		<link rel="stylesheet" href="css/bootstrap.min.css"  />
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/iplocation.js"></script>
+		
+		
+        <meta charset="utf-8">
+        <title>查看抽奖</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- CSS -->
+        
+        <link rel="stylesheet" href="css/style.css">
+
+       
+
+    </head>
+
+    <body style="background:url('img/user_background.gif');background-repeat:repeat ;">
+    	
+        <div style= "position: absolute;text-align: center;width:100%;height:100%">
+        	<div style = "position:relative;top:150px">
+	            <h1 style = "margin:0 auto 40px auto">查看抽奖</h1>
+	            <form id = "usercheck_fm" action="" method="post">
+	                <input id="login_ptel" class="fitem" name="login_ptel" placeholder="请输入电话"/>            
+	               	</br>
+	                <button type="button" class="submit_button"  onclick="userCheck()"> 查看</button>
+	            </form>
+           </div>
+            
+        </div>
+        
+		
+        <script type="text/javascript">
+
+			function userCheck(){
+				if($("#login_ptel").val()===""){
+					alert('必须填写电话号');
+				}
+				else{
+					$.ajax({
+				  		type:"POST",  //请求方式   GET POST
+				  		//请求地址
+				  		url:"http://"+iplocation+":9999/usercheck",
+				  		//是否同步
+						data:{
+							ptel:$("#login_ptel").val()
+						},
+				  		async:true,
+				  		//请求成功数据  		
+				  		success:function(msg){
+				  			if(msg.msg){
+				  				location.href = "userchecklist.html?pid=" + msg.pid;
+				  			}else{
+				  				alert('您没有参与过任何抽奖活动！请重新输入');
+				  			}
+				  		}
+				  	});
+				}
+			}
+			
+			
+		</script>
+		
+
+    </body>
+
+</html>
+

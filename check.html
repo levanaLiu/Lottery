@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>check</title>
+		
+	</head>
+
+	<body>
+		<div id="cc" class="easyui-layout" fit="true">
+			<div data-options="region:'west',split:true" style="width:200px;">
+				<!--ul id="tree"></ul--> 
+				<ul id='tree' class="easyui-tree" data-options="url:'get_data.php'"></ul>  
+			</div>
+			<div data-options="region:'center'," style="background:#eee;border: none;">
+				<table id="check_tree_dg" style="border: none;"></table>
+				<div id="dlg" class="easyui-dialog" style="width:400px;padding:10px 20px" closed="true">
+					<form id="fm" method="post" novalidate>
+						<div class="fitem">
+							<label>电话:</label>
+							<input id="check_phone" name="check_phone" class="easyui-textbox" required="true">
+						</div>
+						<div class="fitem">
+							<label>中奖情况:</label>
+							<input id="check_condition" name="check_condition" class="easyui-textbox" required="true">
+						</div>
+						<div class="fitem">
+							<label>备注:</label>
+							<input id="check_remark" name="check_remark" class="easyui-textbox" required="true">
+						</div>
+						<div class="fitem">
+							<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="width:30%" onclick="save()">保存</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			/*$(function(){
+				$('#tt').tree({    
+							    url:'http://192.168.2.162:9999/getchecktree',   
+							    loader: function(param,success,error){    
+							        success:function(){
+							        	
+							        }
+							    }    
+							}); 
+				$('#tt').tree({
+							onClick: function(){
+								
+							}
+						});
+			}*/
+			    $("#tree").tree({
+			      	url:"http://"+iplocation+":9999/getchecktree",
+			       onBeforeExpand:function(node){  
+			       		 $("#tree").tree('options').queryParams.text=node.text;
+			        }, 
+			         queryParams:{
+			         	text:'cc'
+			         },
+			         loadFilter: function(data){	
+			          if (data.msg){	
+			            return data.msg;	
+			         } else {	
+			           return data;	
+			         }	
+			      	}, 
+			      	lines : true,
+			      	onClick : function(node) {
+				        if($('#tree').tree('isLeaf',node.target)){	
+				        	$('#check_tree_dg').datagrid({
+								url: "http://"+iplocation+":9999/getperson",
+								method: 'POST',
+								//toolbar: '#check_person_tb',//顶部工具栏
+								pagination: true, //分页工具栏
+								iconCls: "icon-add",
+								rownumbers:true,
+								singleSelect:true,
+								fit:true,
+								columns: [
+									[{
+										field: 'ptel',
+										title: '参与者电话',
+										width: 150,
+									},{
+										field: 'sstatus',
+										title: '获奖状态',
+										width: 150,
+									},{
+										field: 'sremarks',
+										title: '备注',
+										width: 350,
+									}]
+								]
+							});
+				         	$('#check_tree_dg').datagrid('load',{
+								lunit: $('#tree').tree('getParent',node.target).text,
+								lcreator: node.text
+							});
+				         
+			            
+						}
+						if (node.attributes) {
+				          openTab(node.text, node.attributes.url);
+				        }
+					}
+			    });
+		</script>
+	</body>
+
+</html>
